@@ -6,6 +6,8 @@ const tailWindBtnClasses = "px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:
 const tailWindDeleteBtnClasses = "px-4 py-2 mx-2 bg-red-500 text-white rounded hover:bg-pink-600 active:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
 const tailWindInputClasses = "px-1 py-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 export default function UsersPage() {
   const [users, setUsers] = useState<{_id: string, name: string, email: string}[]>([])
   const [name, setName] = useState("")
@@ -16,7 +18,7 @@ export default function UsersPage() {
   }, [])
 
   const getUsers = async () => {
-    const res = await fetch("http://localhost:3001/users/api")
+    const res = await fetch(`${apiUrl}/users/api`)
     if (res.ok) {
       const users = await res.json()
       setUsers(users)
@@ -30,7 +32,7 @@ export default function UsersPage() {
         name,
         email
       }
-      const res = await fetch("http://localhost:3001/users/api", {
+      const res = await fetch(`${apiUrl}/users/api`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +53,7 @@ export default function UsersPage() {
 
   const handleDeleteUser = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:3001/users/${id}/api`, {
+      const res = await fetch(`${apiUrl}/users/${id}/api`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

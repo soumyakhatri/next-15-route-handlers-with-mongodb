@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import User from "../../api/models/User";
 import { ObjectId } from "mongodb";
 import { connectToMongoose } from "@/lib/mongodb";
+
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await connectToMongoose();

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 const tailWindBtnClasses = "px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
 const tailWindInputClasses = "px-1 py-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 export default function EditUser() {
     const params = useParams()
@@ -21,7 +22,7 @@ export default function EditUser() {
 
     const getUser = async () => {
         const { id } = params
-        const res = await fetch(`http://localhost:3001/users/${id}/api`, {
+        const res = await fetch(`${apiUrl}/users/${id}/api`, {
             cache: 'no-store'
         })
         if (res.ok) {
@@ -39,7 +40,7 @@ export default function EditUser() {
             email
         }
         const { id } = params;
-        const res = await fetch(`http://localhost:3001/users/${id}/api`,  {
+        const res = await fetch(`${apiUrl}/users/${id}/api`,  {
             method: "PATCH",
             body: JSON.stringify(data),
             headers: {
