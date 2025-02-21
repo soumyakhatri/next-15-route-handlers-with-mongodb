@@ -1,19 +1,32 @@
 import { connectToMongoose } from "@/lib/mongodb";
 import User from '@/app/users/api/models/User'
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const searchParams = request.nextUrl.searchParams
+    const query = searchParams?.get("query")
     await connectToMongoose();
-    const users = await User.find().select('-__v'); // Exclude version field
-    return NextResponse.json(users);
+    let users = [];
+    if(query){
+      users = await User.find({
+        name: query
+      })
+    } else {
+      users = await User.find().select('-__v'); // Exclude version field
+    }
+    return NextResponse.json(users, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   try {
     await connectToMongoose();
     const { name, email } = await req.json();
@@ -43,12 +56,11 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating user:', error);
-    
-    // Handle duplicate email error
-    if (error.code === 11000) {
+    if (error instanceof Error) {
+      console.error('Error creating user:', error);
+      // Handle duplicate email error
       return NextResponse.json(
-        { error: "Email already exists" },
+        { error: error.message },
         { status: 409 }
       );
     }
