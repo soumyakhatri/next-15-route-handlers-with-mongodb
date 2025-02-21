@@ -4,27 +4,31 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const query = searchParams?.get("query")
+    const searchParams = request.nextUrl.searchParams;
+    const query = searchParams.get("query")?.trim(); // Trim to avoid spaces-only queries
+
     await connectToMongoose();
+
     let users = [];
-    if(query){
+
+    if (query) {
       users = await User.find({
-        name: query
-      })
+        name: { $regex: query, $options: "i" }, // Case-insensitive search
+      }).select("-__v");
     } else {
-      users = await User.find().select('-__v'); // Exclude version field
+      users = await User.find().select("-__v");
     }
-    return NextResponse.json(users, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+
+    return NextResponse.json(users.length ? users : { message: "No users found" }, {
+      headers: { "Content-Type": "application/json" },
     });
+
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error("Error fetching users:", error);
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
 }
+
 
 export async function POST(req: NextRequest) {
   try {

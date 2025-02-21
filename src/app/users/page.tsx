@@ -12,16 +12,25 @@ export default function UsersPage() {
   const [users, setUsers] = useState<{_id: string, name: string, email: string}[]>([])
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [searchText, setSearchText] = useState("")
 
   useEffect(() => {
     getUsers()
-  }, [])
+  }, [searchText])
 
   const getUsers = async () => {
-    const res = await fetch(`${apiUrl}/users/api`)
-    if (res.ok) {
-      const users = await res.json()
-      setUsers(users)
+    try {
+      const res = await fetch(`${apiUrl}/users/api?query=${searchText}`)
+      if (res.ok) {
+        const users = await res.json()
+        if(users && Array.isArray(users)){
+          setUsers(users)
+        } else {
+          setUsers([])
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -70,8 +79,9 @@ export default function UsersPage() {
   }
 
   return (
-    <div>
+    <div className="ms-2 mt-4">
       <h1 className="font-bold" >Users</h1>
+      <input type="search" className={tailWindInputClasses}  value={searchText} onChange={e=> setSearchText(e.target.value)}/>
       <ul>
         {users.map((user) => (
           <li key={user._id} className="my-2">
