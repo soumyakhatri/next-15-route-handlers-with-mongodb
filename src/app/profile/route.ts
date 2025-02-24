@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers"
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         // const headers = new Headers(request.headers)
         // const authorization = headers.get("Authorization")
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         console.log("theme========", theme)
 
         const data = "<h)1> Profile Page </h1>"
-        
+
         return new NextResponse(data, {
             headers: {
                 "Content-Type": "text/html" ,

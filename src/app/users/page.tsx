@@ -14,10 +14,6 @@ export default function UsersPage() {
   const [email, setEmail] = useState("")
   const [searchText, setSearchText] = useState("")
 
-  useEffect(() => {
-    getUsers()
-  }, [searchText])
-
   const getUsers = async () => {
     try {
       const res = await fetch(`${apiUrl}/users/api?query=${searchText}`)
@@ -33,6 +29,10 @@ export default function UsersPage() {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    getUsers()
+  }, [searchText])
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
